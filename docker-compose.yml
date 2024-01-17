@@ -1,0 +1,39 @@
+services:
+  php:
+    build:
+      context: ./
+      dockerfile: ./php.Dockerfile
+    volumes:
+      - ./index.php:/var/www/html/index.php
+    depends_on:
+      - db
+      - phpmyadmin
+    restart: always
+    ports:
+      - 8580:80
+
+  db:
+    image: mariadb:latest
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=wordpress
+    restart: always
+
+  phpmyadmin:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    ports:
+      - 8880:80
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: password
+      UPLOAD_LIMIT: 64M
+
+volumes:
+  db_data:
