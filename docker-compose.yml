@@ -4,13 +4,19 @@ services:
       context: ./
       dockerfile: ./php.Dockerfile
     volumes:
-      - ./index.php:/var/www/html/index.php
+      - ./wordpress:/var/www/html
+      - ./wp-content:/var/www/html/wp-content
+      - ./index.php:/var/www/index.php
+      - ./wp-cli.yml:/var/www/wp-cli.yml
+      - ./install-wp.sh:/var/www/install-wp.sh
+    env_file:
+      - .env
     depends_on:
       - db
       - phpmyadmin
     restart: always
     ports:
-      - 8580:80
+      - 8080:80
 
   db:
     image: mariadb:latest
@@ -29,7 +35,7 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     restart: always
     ports:
-      - 8880:80
+      - 8100:80
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: password
